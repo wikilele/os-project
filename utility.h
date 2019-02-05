@@ -44,9 +44,9 @@ extern void schedule();
 extern void test(void); 
 
 
-inline void __terminate_thread(struct tcb_t* sender);
-inline void __terminate_process(struct tcb_t* sender);
-inline void __set_dev_fields(uintptr_t* rinfo);
+void __terminate_thread(struct tcb_t* sender);
+void __terminate_process(struct tcb_t* sender);
+void __set_dev_fields(uintptr_t* rinfo);
 
 static void panic_msg(char *s){
 	setSTATUS(STATUS_ALL_INT_DISABLE(getSTATUS()));

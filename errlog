@@ -1,0 +1,31 @@
+ERR 1 //rimosso lascio comunque qui la descrizione delle modifiche fatte
+
+Consideriamo un thread che si trova in testa ad una delle code della I/O matrix.
+Se il thread muore a causa di un suo parente prima che venga completato l'I/O, la gestione di questo risulta sfalzata.
+Si può procedere definendo una nuova costante
+#define T_STATUS_W4IO 	5
+che viene usata per indicare che il thread sta aspettando la fine di un operazione di I/O e viene settata prima che 
+si esegua la __set_dev_fields(...). (può anche essere settata all'interno della funzione)
+Quando arriva l'interrupt controlliamo il thread in cima alla coda di I/O :
+se è NULL non facciamo nulla ;
+se ha il campo t_status == T_STATUS_W4IO  procediamo come prima mettendo però questo campo a
+T_STATUS_W4MSG perchè ora il thread aspetta un messaggio dalla SSI ;
+se t_status != T_STATUS_W4IO allora non inviamo alcun messaggio e procediamo con la richiesta di I/O 
+successiva .
+
+
+MIGLIORABILI
+
+> il cpu time della SSI non assume valori corretti dato che la SSI lavora a interrupt disabilitati è possibile
+ che quando operi il TODLO sia superiore a INTTIMER
+
+> ho assunto che nella __do_io(...) il campo devCommand che ci è passato sia corretto e non necessiti di alcun
+ controllo
+
+> !!! prima che il processore vada in stato WAIT è meglio settare l'interval timer alla scadenza del prossimo
+ psueudo-clock !!! 
+
+> organizzazione dei file nella cartella phasetwo (quella consegnata al prof)
+
+DOCUMENTATION TYPO
+
